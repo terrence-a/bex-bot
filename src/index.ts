@@ -1,7 +1,4 @@
-// Workaround for Node 21+ incompatibility with Webex SDK trying to set read-only global navigator
-if (global.navigator) {
-  delete (global as any).navigator;
-}
+import "./patch";
 
 import express from "express";
 import bodyParser from "body-parser";
@@ -14,12 +11,12 @@ const webhook = require("webex-node-bot-framework/webhook");
 const app = express();
 app.use(bodyParser.json());
 
-// Set up bot framework event handlers
-setupWebexBot();
-
-// Start the framework
-framework.start();
-console.log("Starting framework, please wait...");
+// Set up bot framework event handlers and start framework
+(async () => {
+  await setupWebexBot();
+  framework.start();
+  console.log("Starting framework, please wait...");
+})();
 
 app.get("/", (req, res) => {
   res.send("I'm alive.");
